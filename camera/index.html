@@ -40,8 +40,8 @@
 </div>
 <div class="buttonRow">
     <button onclick="stop()">Stop</button>
-    <!--    <button id="capture-button">Capture</button>-->
     <button id="screen-button">Screenshot</button>
+    <button id="css-filters-apply">Apply CSS filter</button>
 </div>
 <div id="screenshot" class="imageRow">
     <img src="">
@@ -83,6 +83,28 @@
     //     video.srcObject = stream;
     // }
 
+    const cssFiltersButton = document.querySelector("#css-filters-apply");
+
+    let filterIndex = 0;
+    const filters = [
+        "grayscale",
+        "sepia",
+        "blur",
+        "brightness",
+        "contrast",
+        "hue-rotate",
+        "hue-rotate2",
+        "hue-rotate3",
+        "saturate",
+        "invert",
+        "",
+    ];
+
+    cssFiltersButton.onclick = video.onclick = function () {
+        video.className = filters[filterIndex++ % filters.length];
+    };
+
+
     if (navigator.mediaDevices.getUserMedia) {
         navigator.mediaDevices.getUserMedia(vgaConstraints)
             .then(function (stream) {
@@ -90,7 +112,7 @@
                 video.srcObject = stream;
             })
             .catch(function (err0r) {
-                console.log("Something went wrong!");
+                console.log("Something went wrong! " + err0r);
             });
     }
 
