@@ -7,14 +7,14 @@
     <style>
         #container {
             margin: 0 auto;
-            width: 500px;
-            height: 375px;
+            width: 640px;
+            height: 480px;
             border: 10px #333 solid;
         }
 
         #videoElement {
-            width: 500px;
-            height: 375px;
+            width: 640px;
+            height: 480px;
             background-color: #666;
         }
 
@@ -25,8 +25,8 @@
 
         .imageRow{
             margin: 0 auto;
-            width: 500px;
-            height: 375px;
+            width: 640px;
+            height: 480px;
             border: 10px skyblue solid;
         }
     </style>
@@ -41,13 +41,17 @@
 <div class="buttonRow">
     <button onclick="stop()">Stop</button>
     <!--    <button id="capture-button">Capture</button>-->
-    <button id="screen-button" disabled>Screenshot</button>
+    <button id="screen-button">Screenshot</button>
 </div>
 <div id="screenshot" class="imageRow">
     <img src="">
     <canvas style="display:none;"></canvas>
 </div>
 <script>
+    const vgaConstraints = {
+        video: { width: { exact: 640 }, height: { exact: 480 } },
+    };
+
     const video = document.querySelector("#videoElement");
 
     // const captureVideoButton = document.querySelector(
@@ -80,7 +84,7 @@
     // }
 
     if (navigator.mediaDevices.getUserMedia) {
-        navigator.mediaDevices.getUserMedia({video: true})
+        navigator.mediaDevices.getUserMedia(vgaConstraints)
             .then(function (stream) {
                 screenshotButton.disabled = false;
                 video.srcObject = stream;
