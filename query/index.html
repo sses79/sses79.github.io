@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>OCR Question Extractor</title>
+    <script src="https://cdn.jsdelivr.net/npm/tesseract.js@4"></script>
+    <style>
+      video,
+      canvas {
+        width: 100%;
+        max-width: 400px;
+      }
+      button {
+        margin-top: 10px;
+      }
+      #output {
+        white-space: pre-wrap;
+        margin-top: 15px;
+      }
+    </style>
+  </head>
+  <body>
+    <h2>Capture Text & Extract Questions</h2>
+
+    <video id="video" autoplay></video><br />
+    <button onclick="capture()">Capture & OCR</button><br />
+    <canvas id="canvas" style="display: none"></canvas>
+
+    <div id="output"></div>
+
+    <script>
+      const video = document.getElementById("video");
+      const canvas = document.getElementById("canvas");
+      const output = document.getElementById("output");
+
+      // Ask for camera access
+      navigator.mediaDevices
+        .getUserMedia({ video: true })
+        .then((stream) => (video.srcObject = stream))
+        .catch((err) => alert("Camera access denied: " + err));
+
+      function capture() {
+        const ctx = canvas.getContext("2d");
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+        const image = canvas.toDataURL();
+
+        output.innerText = "Processing OCR...";
+
+        Tesseract.recognize(image, "eng")
+          .then(({ data: { text } }) => {
+            output.innerHTML = `<strong>Full Text:</strong><br>${text}<br><br>`;
+
+            // Found by including "?" in the text
+            // This is a simple heuristic and may not work for all cases
+            const questions = text
+              .split("\n")
+              .filter((line) => line.includes("?"));
+            if (questions.length) {
+              output.innerHTML += `<strong>Questions Found:</strong><br>${questions.join(
+                "\n"
+              )}`;
+            } else {
+              output.innerHTML += "No questions detected.";
+            }
+          })
+          .catch((err) => (output.innerText = "Error: " + err));
+      }
+    </script>
+  </body>
+</html>
